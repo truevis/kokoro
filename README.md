@@ -19,7 +19,10 @@ Start again later (from the clone):
 ```powershell
 cd .\Kokoro-FastAPI
 .\start-gpu.ps1    # or .\start-cpu.ps1
+.\stop.ps1         # stop uvicorn when not in the start terminal
 ```
+
+From the repo root you can also run `.\stop.ps1`.
 
 Open a **new** PowerShell after install if `uv` is not found (winget updates PATH).
 
@@ -36,15 +39,14 @@ Root `http://localhost:8880/` returns 404 — use `/web/` or `/docs`. Default: n
 
 In the terminal running `start-gpu.ps1` / `start-cpu.ps1`: **Ctrl+C** and wait until uvicorn exits (frees GPU memory).
 
-If it is running elsewhere:
+If it is running elsewhere (or you closed that terminal):
 
 ```powershell
-Get-NetTCPConnection -LocalPort 8880 -ErrorAction SilentlyContinue |
-  Select-Object -ExpandProperty OwningProcess -Unique |
-  ForEach-Object { Stop-Process -Id $_ -Force }
+cd .\Kokoro-FastAPI
+.\stop.ps1
 ```
 
-Or Task Manager → end the **Python** process for `Kokoro-FastAPI`.
+`install.ps1` copies `stop.ps1` from this repo into `Kokoro-FastAPI\`. It ends whichever process is listening on port **8880** and confirms `/health` no longer responds.
 
 Check: `Invoke-WebRequest http://localhost:8880/health` should fail once stopped.
 

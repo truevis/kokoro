@@ -29,6 +29,8 @@ $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [En
 if (Test-Path "$dir\.git") { git -C $dir pull --ff-only }
 else { git clone https://github.com/remsky/Kokoro-FastAPI.git $dir }
 
+Copy-Item (Join-Path $PSScriptRoot "stop.ps1") (Join-Path $dir "stop.ps1") -Force
+
 $startScript = if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) { "start-gpu.ps1" } else { "start-cpu.ps1" }
 Write-Host "Using $startScript (first run downloads the model)"
 Set-Location $dir
