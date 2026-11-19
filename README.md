@@ -48,6 +48,8 @@ The sidebar shows whether the API is running and a **Start API** / **Stop API** 
 
 The main form is voice, language, speed (`0.25`–`4`), volume (`0`–`2`), format (`mp3`, `wav`, or `flac`), and the text. Each voice keeps its id and adds a short description: language and gender (`af_heart — American English, female`). A name ending in `_inno` is marked tuned, `_tuned` is a tune you saved, and `v0` is an older pack. **Create audio** plays the clip under the button and offers **Download**.
 
+![Streamlit app: voice, language, speed, volume, format, and the text to read](img/screenshot.jpg)
+
 **Read phone numbers** is on by default. A separated number such as `555-123-4567` is spoken digit by digit. A number with no separators is spoken digit by digit when the sentence calls it a phone, mobile, cell, fax, or dial number: `My phone number is 8275409.` is "eight two seven, five four zero nine." A 7-digit figure with no phone wording is still read as a quantity ("eight million…"). The same rule is `phone_normalization` on `POST /v1/audio/speech`.
 
 The page footer links to [aifab.xyz](https://aifab.xyz).
