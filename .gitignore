@@ -1,0 +1,31 @@
+# Upstream clone (venv, model weights, caches live inside it)
+Kokoro-FastAPI/
+
+# Model weights / large binaries, wherever they end up
+*.pth
+*.pt
+*.onnx
+*.safetensors
+*.bin
+*.ckpt
+models/
+voices/
+
+# Python envs and caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+.uv-cache/
+.cache/
+huggingface/
+
+# Generated audio (keep committed sample under test/)
+*.mp3
+!test/kokoro-sample.mp3
+*.wav
+*.flac
+*.ogg
+
+# Logs
+*.log
