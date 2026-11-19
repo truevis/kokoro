@@ -5,8 +5,12 @@ Native Windows install (no Docker): installs **uv**, **eSpeak NG**, and **Git** 
 ## Install and run
 
 ```powershell
+git clone https://github.com/truevis/kokoro.git
+cd kokoro
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
+
+To use another directory name, clone as usual and run `install.ps1` from the repo root. Optional: set `$env:KOKORO_DIR` before install to choose where `Kokoro-FastAPI` is cloned (default: `.\Kokoro-FastAPI` next to this repo).
 
 `install.ps1` picks **GPU** (`start-gpu.ps1`) when `nvidia-smi` works, otherwise **CPU** (`start-cpu.ps1`). First start downloads model weights.
 
