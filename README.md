@@ -1,6 +1,6 @@
 # Kokoro-FastAPI on Windows (no Docker)
 
-Native Windows install (no Docker): installs **uv**, **eSpeak NG**, and **Git** via winget (only if missing), clones [Kokoro-FastAPI](https://github.com/remsky/Kokoro-FastAPI) into `Kokoro-FastAPI\`, creates a `.venv`, and starts the API.
+Native Windows install (no Docker): installs **uv**, **eSpeak NG**, and **Git** via winget (only if missing), clones [Kokoro-FastAPI](https://github.com/remsky/Kokoro-FastAPI) into `Kokoro-FastAPI\`, creates a `.venv`, and starts the API. `app.py` is a Streamlit page that starts that API and turns text into speech.
 
 ## Install and run
 
@@ -28,10 +28,29 @@ Open a **new** PowerShell after install if `uv` is not found (winget updates PAT
 
 | What | URL |
 |------|-----|
+| This app | http://localhost:8501 |
 | Web player | http://localhost:8880/web/ |
 | API docs | http://localhost:8880/docs |
 | Health | http://localhost:8880/health |
 | TTS (OpenAI-compatible) | `POST http://localhost:8880/v1/audio/speech` |
+
+## App
+
+From the repo root, with [Streamlit](https://docs.streamlit.io) installed:
+
+```powershell
+streamlit run app.py
+```
+
+Open http://localhost:8501. The page calls the API at http://localhost:8880.
+
+The sidebar shows whether the API is running and a **Start API** / **Stop API** button. Start launches `Kokoro-FastAPI\start-gpu.ps1` when `nvidia-smi` works, otherwise `start-cpu.ps1`. Stop runs `stop.ps1` and ends that launcher. Status refreshes every few seconds. The first start downloads weights and can take several minutes.
+
+The main form is voice, language, speed (`0.25`–`4`), volume (`0`–`2`), format (`mp3`, `wav`, or `flac`), and the text. Each voice keeps its id and adds a short description: language and gender (`af_heart — American English, female`). A name ending in `_inno` is marked tuned, `_tuned` is a tune you saved, and `v0` is an older pack. **Create audio** plays the clip under the button and offers **Download**.
+
+**Read phone numbers** is on by default. A separated number such as `555-123-4567` is spoken digit by digit. A number with no separators is spoken digit by digit when the sentence calls it a phone, mobile, cell, fax, or dial number: `My phone number is 8275409.` is "eight two seven, five four zero nine." A 7-digit figure with no phone wording is still read as a quantity ("eight million…"). The same rule is `phone_normalization` on `POST /v1/audio/speech`.
+
+The page footer links to [aifab.xyz](https://aifab.xyz).
 
 Root `http://localhost:8880/` returns 404 — use `/web/` or `/docs`. Default: no API key (`API_KEYS` unset). Keep port **8880** off the public internet.
 
@@ -108,7 +127,7 @@ Path("speech.mp3").write_bytes(r.content)
 | `download_format` | `null` | Must match `response_format` when set. |
 | `return_timing` | `false` | With `return_download_link`, adds timing sidecar (`X-Timing-Path`). |
 | `voice_aliases` | `null` | e.g. `{"narrator": "af_bella", "guest": {"voice": "am_adam", "rate": 0.9}}`. |
-| `normalization_options` | defaults | Sub-keys: `normalize`, `unit_normalization`, `url_normalization`, `email_normalization`, `phone_normalization`, `caps_normalization`, `remove_emoji`, etc. |
+| `normalization_options` | defaults | Sub-keys: `normalize`, `unit_normalization`, `url_normalization`, `email_normalization`, `phone_normalization` (digit-by-digit for separated numbers, and for a bare number named as a phone, mobile, cell, fax, or dial number), `caps_normalization`, `remove_emoji`, etc. |
 
 If `API_KEYS` is set in `Kokoro-FastAPI\.env`, send `Authorization: Bearer <key>`.
 
